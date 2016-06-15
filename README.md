@@ -1,7 +1,7 @@
 # JSON-Parser-Generator
 a python module ,  generate java model classes and java json parsers for you in one go
 
-For given sample json we get [files!]()
+For given sample json we get [files](Parsers/)
 ```json
 {
     "_id": "5760cf61fb165d9dceb8c34b",
