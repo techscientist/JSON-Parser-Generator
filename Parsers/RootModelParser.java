@@ -13,6 +13,15 @@ class RootModelParser {
 			try {
 					JSONObject jsobj = new JSONObject(json_object);
 
+					ArrayList<String> tags = new ArrayList<>();
+					JSONArray tags_arr = jsobj.getJSONArray("tags");
+			
+					for(int i = 0 ;i<tags_arr.length()-1;i++){
+
+ 						tags.add((String)tags_arr.get(i)));
+
+					}
+
 					ArrayList<FriendsModel> friendss = new ArrayList<>();
 					JSONArray friends_arr = jsobj.getJSONArray("friends");
 			
@@ -22,16 +31,7 @@ class RootModelParser {
 
 					}
 
-					ArrayList<Integer> tags = new ArrayList<>();
-					JSONArray tags_arr = jsobj.getJSONArray("tags");
-			
-					for(int i = 0 ;i<tags_arr.length()-1;i++){
-
- 						tags.add((int)tags_arr.get(i)));
-
-					}
-
-					local_model = new RootModel(jsobj.getInt("age") , jsobj.getString("about") , jsobj.getBoolean("isActive") , jsobj.getString("_id") , jsobj.getString("gender") , jsobj.getString("name") , jsobj.getString("email") , jsobj.getString("balance") , jsobj.getString("company") , jsobj.getString("registered") , jsobj.getString("greeting") , jsobj.getString("picture") , jsobj.getString("eyeColor") , jsobj.getString("address") , jsobj.getInt("index") , friendss, jsobj.getString("phone") , jsobj.getString("favoriteFruit") , jsobj.getString("guid") , ta);
+					local_model = new RootModel(jsobj.getInt("index") , jsobj.getString("company") , jsobj.getString("email") , jsobj.getString("picture") , jsobj.getString("registered") , jsobj.getString("about") , jsobj.getString("gender") , jsobj.getString("greeting") , jsobj.getString("phone") , jsobj.getString("name") , jsobj.getString("eyeColor") , jsobj.getString("address") , jsobj.getInt("age") , jsobj.getString("_id") , jsobj.getString("balance") , jsobj.getString("guid") , jsobj.getBoolean("isActive") , tagsjsobj.getString("favoriteFruit") , friendss);
  			} 
 			catch (JSONException e){
 

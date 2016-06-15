@@ -2,49 +2,49 @@ import java.util.ArrayList;
 
 class RootModel {
 
-		public int age;
-		public String about;
-		public Boolean isActive;
-		public String _id;
-		public String gender;
-		public String name;
-		public String email;
-		public String balance;
+		public int index;
 		public String company;
-		public String registered;
-		public String greeting;
+		public String email;
 		public String picture;
+		public String registered;
+		public String about;
+		public String gender;
+		public String greeting;
+		public String phone;
+		public String name;
 		public String eyeColor;
 		public String address;
-		public int index;
-		public ArrayList<FriendsModel> friends;
-		public String phone;
-		public String favoriteFruit;
+		public int age;
+		public String _id;
+		public String balance;
 		public String guid;
-		public ArrayList<Integer> tags;
+		public Boolean isActive;
+		public ArrayList<String> tags;
+		public String favoriteFruit;
+		public ArrayList<FriendsModel> friends;
 
-public RootModel(int age, String about, Boolean isActive, String _id, String gender, String name, String email, String balance, String company, String registered, String greeting, String picture, String eyeColor, String address, int index, ArrayList<FriendsModel> friends, String phone, String favoriteFruit, String guid, ArrayList<Integer> tags) {
+public RootModel(int index, String company, String email, String picture, String registered, String about, String gender, String greeting, String phone, String name, String eyeColor, String address, int age, String _id, String balance, String guid, Boolean isActive, ArrayList<String> tags, String favoriteFruit, ArrayList<FriendsModel> friends) {
 
-		this.age = age;
-		this.about = about;
-		this.isActive = isActive;
-		this._id = _id;
-		this.gender = gender;
-		this.name = name;
-		this.email = email;
-		this.balance = balance;
+		this.index = index;
 		this.company = company;
-		this.registered = registered;
-		this.greeting = greeting;
+		this.email = email;
 		this.picture = picture;
+		this.registered = registered;
+		this.about = about;
+		this.gender = gender;
+		this.greeting = greeting;
+		this.phone = phone;
+		this.name = name;
 		this.eyeColor = eyeColor;
 		this.address = address;
-		this.index = index;
-		this.friends = friends;
-		this.phone = phone;
-		this.favoriteFruit = favoriteFruit;
+		this.age = age;
+		this._id = _id;
+		this.balance = balance;
 		this.guid = guid;
+		this.isActive = isActive;
 		this.tags = tags;
+		this.favoriteFruit = favoriteFruit;
+		this.friends = friends;
 
 	}
 

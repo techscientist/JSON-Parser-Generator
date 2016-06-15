@@ -154,7 +154,7 @@ def create_base(_json, _model_name):
                 _new_model_name = _key[0].capitalize() + _key[1:len(_key)]
                 _new_json = _suspect_json
                 create_base(_new_json, _new_model_name)
-            else:
+            if _suspect_json[0] not in ('"','{'):
                 _dict[_key] = 'ilist'
 
         if type(_json_dict[_key]) is bool:
@@ -200,7 +200,7 @@ def re_format_json(_json):
 #=========#
 #Option 2 #
 #=========#
-#_target_json = """<Your Json Here>"""
+_target_json = """< - Your Json Here - >"""
 
 _target_json = re_format_json(_target_json)
 if not path.isdir('Parsers'):
