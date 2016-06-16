@@ -36,7 +36,7 @@ def dump_parsers(_model_dict, _model_name, _file_name):
             # _parser_import_lines += 'import ' + _lib_ref +'Parser.java;\n'    // -do-
             _return_object_attr += _t
             _array_list_creation += '\n\n\t\t\t\t\tArrayList<String>' + ' ' + _t + ' = new ArrayList<>();\n\t\t\t\t\tJSONArray ' + _t + '_arr = jsobj.getJSONArray("' + _t + '");\n'
-            _array_list_creation += '\t\t\t\n\t\t\t\t\tfor(int i = 0 ;i<' + _t + '_arr.length()-1;i++){\n\n '
+            _array_list_creation += '\t\t\t\n\t\t\t\t\tfor(int i = 0 ;i<' + _t + '_arr.length();i++){\n\n '
             _array_list_creation += '\t\t\t\t\t\t' + _t + '.add((String)' + _t + '_arr.get(i)));\n\n\t\t\t\t\t}'
 
         if _model_dict[_t] == 'ilist':
@@ -46,7 +46,7 @@ def dump_parsers(_model_dict, _model_name, _file_name):
             # _parser_import_lines += 'import ' + _lib_ref +'Parser.java;\n'    // -do-
             _return_object_attr += _t
             _array_list_creation += '\n\n\t\t\t\t\tArrayList<Integer>' + ' ' + _t + ' = new ArrayList<>();\n\t\t\t\t\tJSONArray ' + _t + '_arr = jsobj.getJSONArray("' + _t + '");\n'
-            _array_list_creation += '\t\t\t\n\t\t\t\t\tfor(int i = 0 ;i<' + _t + '_arr.length()-1;i++){\n\n '
+            _array_list_creation += '\t\t\t\n\t\t\t\t\tfor(int i = 0 ;i<' + _t + '_arr.length();i++){\n\n '
             _array_list_creation += '\t\t\t\t\t\t' + _t + '.add((int)' + _t + '_arr.get(i)));\n\n\t\t\t\t\t}'
 
         if _model_dict[_t] == 'list':
@@ -57,8 +57,8 @@ def dump_parsers(_model_dict, _model_name, _file_name):
             _remote_parser_object_creation_lines += '\t\t' + _lib_ref + 'ModelParser ' + _t + '_parser = new ' + _lib_ref + 'ModelParser();\n'
             _return_object_attr += _t + 's, '
             _array_list_creation += '\n\n\t\t\t\t\tArrayList<' + _lib_ref + 'Model>' + ' ' + _t + 's = new ArrayList<>();\n\t\t\t\t\tJSONArray ' + _t + '_arr = jsobj.getJSONArray("' + _t + '");\n'
-            _array_list_creation += '\t\t\t\n\t\t\t\t\tfor(int i = 0 ;i<' + _t + '_arr.length()-1;i++){\n\n '
-            _array_list_creation += '\t\t\t\t\t\t' + _t + 's.add(' + _t + '_parser.parse' + _lib_ref + 'Model((String)' + _t + '_arr.get(i)));\n\n\t\t\t\t\t}'
+            _array_list_creation += '\t\t\t\n\t\t\t\t\tfor(int i = 0 ;i<' + _t + '_arr.length();i++){\n\n '
+            _array_list_creation += '\t\t\t\t\t\t' + _t + 's.add(' + _t + '_parser.parse' + _lib_ref + 'Model(' + _t + '_arr.get(i).toString()));\n\n\t\t\t\t\t}'
 
         if _model_dict[_t] in ('str','int','bool'):
             if _model_dict[_t] == 'int':
@@ -200,7 +200,7 @@ def re_format_json(_json):
 #=========#
 #Option 2 #
 #=========#
-_target_json = """< - Your Json Here - >"""
+_target_json = """<Your Json Here>"""
 
 _target_json = re_format_json(_target_json)
 if not path.isdir('Parsers'):
