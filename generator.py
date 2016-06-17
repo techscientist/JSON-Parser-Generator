@@ -29,12 +29,20 @@ def dump_parsers(_model_dict, _model_name, _file_name):
 
     for _t in _model_dict:
 
+        if _model_dict[_t] == 'dict':
+
+            _lib_ref = _t[0].capitalize() + _t[1:len(_t)]
+            _return_object_attr += _t +', '
+            _remote_parser_object_creation_lines += '\t\t' + _lib_ref + 'ModelParser '+ _t + '_parser = new '+_lib_ref + 'ModelParser();\n'
+            _array_list_creation += '\n\n\t\t\t\t\t'+_lib_ref+'Model '+_t+' = '+_t+'_parser.parse'+_lib_ref+'Model(jsobj.getJSONObject("'+_t+'").toString());'
+
+
         if _model_dict[_t] == 'slist':
             __any_list = True
             _lib_ref = _t[0].capitalize() + _t[1:len(_t)]
             # _parser_import_lines += 'import ' + _lib_ref + '.java;\n'         // import issue is solved with package
             # _parser_import_lines += 'import ' + _lib_ref +'Parser.java;\n'    // -do-
-            _return_object_attr += _t
+            _return_object_attr += _t+', '
             _array_list_creation += '\n\n\t\t\t\t\tArrayList<String>' + ' ' + _t + ' = new ArrayList<>();\n\t\t\t\t\tJSONArray ' + _t + '_arr = jsobj.getJSONArray("' + _t + '");\n'
             _array_list_creation += '\t\t\t\n\t\t\t\t\tfor(int i = 0 ;i<' + _t + '_arr.length();i++){\n\n '
             _array_list_creation += '\t\t\t\t\t\t' + _t + '.add((String)' + _t + '_arr.get(i)));\n\n\t\t\t\t\t}'
@@ -44,7 +52,7 @@ def dump_parsers(_model_dict, _model_name, _file_name):
             _lib_ref = _t[0].capitalize() + _t[1:len(_t)]
             # _parser_import_lines += 'import ' + _lib_ref + '.java;\n'         // import issue is solved with package
             # _parser_import_lines += 'import ' + _lib_ref +'Parser.java;\n'    // -do-
-            _return_object_attr += _t
+            _return_object_attr += _t+', '
             _array_list_creation += '\n\n\t\t\t\t\tArrayList<Integer>' + ' ' + _t + ' = new ArrayList<>();\n\t\t\t\t\tJSONArray ' + _t + '_arr = jsobj.getJSONArray("' + _t + '");\n'
             _array_list_creation += '\t\t\t\n\t\t\t\t\tfor(int i = 0 ;i<' + _t + '_arr.length();i++){\n\n '
             _array_list_creation += '\t\t\t\t\t\t' + _t + '.add((int)' + _t + '_arr.get(i)));\n\n\t\t\t\t\t}'
@@ -58,7 +66,7 @@ def dump_parsers(_model_dict, _model_name, _file_name):
             _return_object_attr += _t + 's, '
             _array_list_creation += '\n\n\t\t\t\t\tArrayList<' + _lib_ref + 'Model>' + ' ' + _t + 's = new ArrayList<>();\n\t\t\t\t\tJSONArray ' + _t + '_arr = jsobj.getJSONArray("' + _t + '");\n'
             _array_list_creation += '\t\t\t\n\t\t\t\t\tfor(int i = 0 ;i<' + _t + '_arr.length();i++){\n\n '
-            _array_list_creation += '\t\t\t\t\t\t' + _t + 's.add(' + _t + '_parser.parse' + _lib_ref + 'Model(' + _t + '_arr.get(i).toString()));\n\n\t\t\t\t\t}'
+            _array_list_creation += '\t\t\t\t\t\t' + _t + 's.add(' + _t + '_parser.parse' + _lib_ref + 'Model((String)' + _t + '_arr.get(i)));\n\n\t\t\t\t\t}'
 
         if _model_dict[_t] in ('str','int','bool'):
             if _model_dict[_t] == 'int':
@@ -87,6 +95,13 @@ def dump_model(_model_dict, _model_name, _file_name):
 
     # templating import statements
     for _t in _model_dict:
+
+        if _model_dict[_t] == 'dict':
+
+            _attrs_dec +='\t\tpublic '+_model_name+ ' _'+_t+';'
+            _const_params += _model_name + ' ' + _t
+            _cons_assignments += 'this.'+_t+' = '+_t
+
         if _model_dict[_t] =='slist':
             __any_list = True
             # _import_lines += 'import '+_lib_ref+'.java;\n'
@@ -141,6 +156,12 @@ def create_base(_json, _model_name):
         if type(_json_dict[_key]) is str:
             _dict[_key] = 'str'
 
+        if type(_json_dict[_key]) is dict:
+            _dict[_key] = 'dict'
+            _new_json =json.dumps(_json_dict[_key])
+            _new_model_name = _key[0].capitalize() + _key[1:len(_key)]
+            create_base(_new_json ,_new_model_name)
+
         if type(_json_dict[_key]) is list:
 
             # check for type-array or json object array
@@ -194,13 +215,13 @@ def re_format_json(_json):
 #Option 1#
 #========#
 # _url = 'www.example.com/api'
-# _target_json  = str(urlopen(_url).read())
-
+# _target_json  = str(urlopen(_url).read()).encode('UTF-8')
+#
 
 #=========#
 #Option 2 #
 #=========#
-_target_json = """<Your Json Here>"""
+_target_json = """"""
 
 _target_json = re_format_json(_target_json)
 if not path.isdir('Parsers'):
