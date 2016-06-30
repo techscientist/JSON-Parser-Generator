@@ -13,14 +13,13 @@ def get_name(_srt):
 
 def dump_parsers(_model_dict, _model_name, _file_name):
 
-    __any_list      = False
-    _return_object  = '\n\t\t\t' 
+    __any_list = False
+    _return_object = '\n\t\t\t' 
     _return_object += _model_name 
     _return_object += ' local_model = null;\n'
 
     _remote_parser_object_creation_lines = '\n'
-    _remote_parser_object_init           = '\n'
-    _parser_import_lines                 = 'import org.json.JSONException;\nimport org.json.JSONObject;\n'
+    _parser_import_lines = 'import org.json.JSONException;\nimport org.json.JSONObject;\n'
 
     _class_declaration = '\nclass ' 
     _class_declaration+= _model_name 
@@ -34,16 +33,16 @@ def dump_parsers(_model_dict, _model_name, _file_name):
     _parser_function_dec+= '(String json_object) {\n'
 
     _json_exception_block_start = '\t\t\ttry {'
-    _json_exception_block_end   = ' \t\t\t} \n\t\t\tcatch (JSONException e){\n\n \t\t\t\t e.printStackTrace();\n\t\t\t}\n\n\t\t\treturn local_model;\n\t\t}'
-    _json_object_dec_line       = '\n\t\t\t\t\tJSONObject jsobj = new JSONObject(json_object);'
-    _parsing_operation_line     = ''
-    _return_object_attr         = ''
-    _model_init                 = ''
+    _json_exception_block_end = ' \t\t\t} \n\t\t\tcatch (JSONException e){\n\n \t\t\t\t e.printStackTrace();\n\t\t\t}\n\n\t\t\treturn local_model;\n\t\t}'
+    _json_object_dec_line = '\n\t\t\t\t\tJSONObject jsobj = new JSONObject(json_object);'
+    _parsing_operation_line = ''
+    _return_object_attr = ''
+    _model_init = ''
     _parser_class_cons_init ='\n\t\tpublic ' 
     _parser_class_cons_init+= _model_name
     _parser_class_cons_init+='Parser() {'
-    _parser_class_cons_end  = '\t\t}\n'
-    _parser_template        = ''
+    _parser_class_cons_end = '\t\t}\n'
+    _parser_template = ''
 
     for _t in _model_dict:
 
@@ -77,10 +76,10 @@ def dump_parsers(_model_dict, _model_name, _file_name):
         if _model_dict[_t] == 'slist':
 
             __any_list = True
-            _lib_ref   = _t[0].capitalize() + _t[1:len(_t)]
+            _lib_ref = _t[0].capitalize() + _t[1:len(_t)]
 
-            _return_object_attr     += _t
-            _parsing_operation_line +=' '
+            _return_object_attr += _t
+            _parsing_operation_line +=', '
             _parsing_operation_line += '\n\n\t\t\t\t\tArrayList<String>' 
             _parsing_operation_line += ' ' 
             _parsing_operation_line += _t 
@@ -101,8 +100,8 @@ def dump_parsers(_model_dict, _model_name, _file_name):
         if _model_dict[_t] == 'ilist':
 
             __any_list = True
-            _lib_ref   = _t[0].capitalize() 
-            _lib_ref  += _t[1:len(_t)]
+            _lib_ref  = _t[0].capitalize() 
+            _lib_ref += _t[1:len(_t)]
             _return_object_attr += _t
             _return_object_attr +=', '
             _parsing_operation_line += '\n\n\t\t\t\t\tArrayList<Integer>' 
@@ -124,21 +123,18 @@ def dump_parsers(_model_dict, _model_name, _file_name):
 
         if _model_dict[_t] == 'list':
             __any_list = True
-            _lib_ref   = _t[0].capitalize() + _t[1:len(_t)]
+            _lib_ref = _t[0].capitalize() + _t[1:len(_t)]
             # _parser_import_lines += 'import ' + _lib_ref + '.java;\n'         // import issue is solved with package
             # _parser_import_lines += 'import ' + _lib_ref +'Parser.java;\n'    // -do-
-            _remote_parser_object_creation_lines += '\t\t' 
+            _remote_parser_object_creation_lines += '\t\t\t' 
             _remote_parser_object_creation_lines += _lib_ref 
             _remote_parser_object_creation_lines += 'ModelParser ' 
             _remote_parser_object_creation_lines += _t 
-            _remote_parser_object_creation_lines += '_parser;\n'
-            _remote_parser_object_init           += '\t\t\t'
-            _remote_parser_object_init           +=_t
-            _remote_parser_object_init           +='_parser = new '
-            _remote_parser_object_init           +=_lib_ref
-            _remote_parser_object_init           +='ModelParser();\n' 
-            _return_object_attr                  += _t 
-            _return_object_attr                  += 's, '
+            _remote_parser_object_creation_lines += '_parser = new ' 
+            _remote_parser_object_creation_lines += _lib_ref 
+            _remote_parser_object_creation_lines += 'ModelParser();\n'
+            _return_object_attr += _t 
+            _return_object_attr += 's, '
             _parsing_operation_line += '\n\n\t\t\t\t\tArrayList<' 
             _parsing_operation_line += _lib_ref 
             _parsing_operation_line += 'Model>' 
@@ -182,14 +178,13 @@ def dump_parsers(_model_dict, _model_name, _file_name):
     _model_init += '\n\n\t\t\t\t\tlocal_model = new '
     _model_init += _model_name
     _model_init += '('
-    _model_init += _return_object_attr[:len(_return_object_attr)]
+    _model_init += _return_object_attr[:len(_return_object_attr) - 2]
     _model_init += ');\n'
 
     _parser_template += _parser_import_lines 
     _parser_template += _class_declaration 
-    _parser_template += _remote_parser_object_creation_lines
     _parser_template += _parser_class_cons_init
-    _parser_template += _remote_parser_object_init
+    _parser_template += _remote_parser_object_creation_lines
     _parser_template += _parser_class_cons_end
     _parser_template += _parser_function_dec
     _parser_template += _return_object
@@ -205,11 +200,11 @@ def dump_parsers(_model_dict, _model_name, _file_name):
         f.close()
 
 def dump_model(_model_dict, _model_name, _file_name):
-    _import_lines     = ''
-    _attrs_dec        = ''  # fields
-    _const_params     = ''
+    _import_lines = ''
+    _attrs_dec = ''  # fields
+    _const_params = ''
     _cons_assignments = ''
-    __any_list        = False
+    __any_list = False
 
     # templating import statements
     for _t in _model_dict:
@@ -267,8 +262,8 @@ def dump_model(_model_dict, _model_name, _file_name):
 
         if _model_dict[_t] == 'list':
             __any_list = True
-            _lib_ref   = _t[0].capitalize() 
-            _lib_ref   += _t[1:len(_t)]
+            _lib_ref = _t[0].capitalize() 
+            _lib_ref+= _t[1:len(_t)]
 
             _attrs_dec += '\tpublic ArrayList<' 
             _attrs_dec += _lib_ref 
@@ -309,17 +304,17 @@ def dump_model(_model_dict, _model_name, _file_name):
 
     if __any_list:
         _temp_import_store = _import_lines
-        _import_lines      = 'import java.util.ArrayList;\n'
-        _import_lines     += _temp_import_store
+        _import_lines = 'import java.util.ArrayList;\n'
+        _import_lines += _temp_import_store
 
-    _class_declaration  = 'class ' 
+    _class_declaration = 'class ' 
     _class_declaration += _model_name 
     _class_declaration += ' {\n'
 
     _class_end_symbol = '\n}'
 
     # templating constructor items
-    _const_dec  = '\tpublic ' 
+    _const_dec = '\tpublic ' 
     _const_dec += _model_name 
     _const_dec += '(' 
     _const_dec += _const_params[:len(_const_params) - 2] 
@@ -355,7 +350,7 @@ def create_base(_json, _model_name):
         if type(_json_dict[_key]) is dict:
 
             _dict[_key] = 'dict'
-            _new_json   =json.dumps(_json_dict[_key])
+            _new_json =json.dumps(_json_dict[_key])
 
             _new_model_name += _key[0].capitalize() 
             _new_model_name += _key[1:len(_key)]
@@ -373,7 +368,7 @@ def create_base(_json, _model_name):
             if _suspect_json[0] == '{':
                 _dict[_key] = 'list'
 
-                _new_model_name  = _key[0].capitalize() 
+                _new_model_name = _key[0].capitalize() 
                 _new_model_name += _key[1:len(_key)]
 
                 _new_json = _suspect_json
@@ -405,7 +400,7 @@ def re_format_json(_json):
     _json = re.compile(_obs).sub(' ',_json)
     data = json.loads(_json)
     if json.dumps(list(data)[0])[0] == '{':
-        _target_json  = '{"j_array" :' 
+        _target_json = '{"j_array" :' 
         _target_json += _json 
         _target_json += '}'
 
@@ -432,16 +427,7 @@ def re_format_json(_json):
 #=========#
 #Option 2 #
 #=========#
-_target_json = """{"type":"list",
-                    "students":["ankit","rajat","bipin","raju"],
-                    "ages" : [23,24,25,26],
-                    "Adresses":[
-                                {"city":"HBG","pin":321111},
-                                {"city":"DHD","pin":321114},
-                                {"city":"KNP","pin":361111},
-                                {"city":"HYD","pin":321101}
-                             ]
-                   }"""
+_target_json = """<Your JSON Here >"""
 
 _target_json = re_format_json(_target_json)
 if not path.isdir('Parsers'):
