@@ -1,7 +1,9 @@
 import json
-from os import mkdir, chdir ,path
+from os import mkdir, chdir ,path , walk
 import re
 from urllib.request import urlopen
+import zipfile
+import os
 
 def get_name(_srt):
     if _srt == 'str':
@@ -9,7 +11,7 @@ def get_name(_srt):
     if _srt == 'bool':
         return 'Boolean'
     if _srt == 'int':
-        return 'int'
+        return 'int' 
 
 def dump_parsers(_model_dict, _model_name, _file_name):
 
@@ -216,20 +218,28 @@ def dump_model(_model_dict, _model_name, _file_name):
 
         if _model_dict[_t] == 'dict':
 
+            _ref_model_name  = _t[0].capitalize() 
+            _ref_model_name += _t[1:len(_t)]
+
             _attrs_dec +='\tpublic '
-            _attrs_dec +=_model_name
+            _attrs_dec +=_ref_model_name
+            _attrs_dec +='Model'
             _attrs_dec += ' _'
             _attrs_dec +=_t
             _attrs_dec +=';'
-
-            _const_params += _model_name 
+            _attrs_dec +='\n'
+            
+            _const_params += _ref_model_name 
+            _const_params +='Model'
             _const_params += ' ' 
             _const_params += _t
-
-            _cons_assignments += 'this.'
+            _const_params += ', '
+            
+            _cons_assignments += '\t\tthis._'
             _cons_assignments +=_t
             _cons_assignments +=' = '
             _cons_assignments +=_t
+            _cons_assignments +=';\n'
 
         if _model_dict[_t] =='slist':
             __any_list = True
@@ -357,9 +367,8 @@ def create_base(_json, _model_name):
             _dict[_key] = 'dict'
             _new_json   =json.dumps(_json_dict[_key])
 
-            _new_model_name += _key[0].capitalize() 
+            _new_model_name  = _key[0].capitalize() 
             _new_model_name += _key[1:len(_key)]
-
             create_base(_new_json ,_new_model_name)
 
         if type(_json_dict[_key]) is list:
@@ -395,14 +404,15 @@ def create_base(_json, _model_name):
     _parser_file_name +='Parser.java'
     _model_file_name   = _model_name 
     _model_file_name  += '.java'
-
     dump_model(_dict, _model_name, _model_file_name)
     dump_parsers(_dict, _model_name, _parser_file_name)
 
 def re_format_json(_json):
 
+# remove distracting chars
     _obs = '\r\n'
     _json = re.compile(_obs).sub(' ',_json)
+# convert json array to a object
     data = json.loads(_json)
     if json.dumps(list(data)[0])[0] == '{':
         _target_json  = '{"j_array" :' 
@@ -413,6 +423,19 @@ def re_format_json(_json):
     else:
         return _json
 
+
+def zipdir(path, ziph):
+    print('for')
+    print(path)
+    for root, dirs, files in walk(path):
+        print(dirs)
+        for file in files:
+            print(root)
+            print(file)
+            ziph.write(os.path.join(root,file))
+
+
+
 # =====================================#
 #            function calls            #
 # =====================================#
@@ -421,7 +444,7 @@ def re_format_json(_json):
 #TODO:    Option 2 :   place your local json between three quoutes
 
 #TODO                              =================-----------  And You Set To Go  -----------------=====================
-
+ 
 #========#
 #Option 1#
 #========#
@@ -432,13 +455,31 @@ def re_format_json(_json):
 #=========#
 #Option 2 #
 #=========#
-_target_json = """{"page": 1, "status": 0, "number": 10, "search_parameter": "tum ho ", "search_results": [{"song": "Woh Ho Tum Sad", "start_url": "http://www.lyricsmasti.com", "song_url": "/song/6905/lyrics-of-Woh-Ho-Tum-Sad.html", "lyrics": "Barbaadi Ki Taraf Moda Hai\r\n Kyun Moda Hai\r\nJisne Mera Dil Toda Hai\r\nDil Toda Hai\r\nBarbaadi Ki Taraf Moda Hai\r\nJisne Mera Dil Toda Hai\r\nWoh Ho Tum Woh Ho Tum\r\nWoh Ho Tum Woh Ho Tum\r\nWoh Ho Tum Woh Ho Tum\r\nWoh Ho Tum Woh Ho Tum\r\n\r\nHo  Tere Surkh Naazuk Larazte Labon Pe\r\nKisi Aur Deewaane Ka Yun Naam Hoga\r\nLyricsMAsti.com\r\nTere Surkh Naazuk Larazte Labon Pe\r\nKisi Aur Deewaane Ka Yun Naam Hoga\r\nNa Socha Tha Maine Kabhi Jaane Jaana\r\nMera Pyaar Bhi Aise Naakaam Hoga\r\nThaamke Yeh Daaman Chhoda Hai, Kyoon Chhoda Hai\r\nBarbaadi Ki Taraf Moda Hai\r\nJisne Mera Dil Toda Hai\r\nWoh Ho Tum Woh Ho Tum\r\nWoh Ho Tum Woh Ho Tum\r\nWoh Ho Tum Woh Ho Tum\r\nWoh Ho Tum Woh Ho Tum \r\nMohabbat Mein Tumne Kisi Roz Dilbar\r\nMujhe Apni Baahon Ka Sahaara Diya Tha\r\nHo, Mohabbat Mein Tumne Kisi Roz Dilbar\r\nMujhe Apni Baahon Ka Sahaara Diya Tha\r\nMeri Chaahaton Ko Khayaalon Ko Tumne\r\nBada Khubsoorat Nazaara Diya Tha\r\nAb Gham Se Rishta Joda Hai, Kyoon Joda Hai\r\nBarbaadi Ki Taraf Moda Hai\r\nJisne Mera Dil Toda Hai\r\nLyricsMasti.com\r\nWoh Ho Tum Woh Ho Tum\r\nWoh Ho Tum Woh Ho Tum\r\nWoh Ho Tum Woh Ho Tum\r\nWoh Ho Tum Woh Ho Tum", "movie": "Muskaan - 2004", "id": "25327", "singers": "['Sonu Niigam']", "lyricist": "['Sameer']", "director": "['Nikhil Vinay']", "movie_url": "/3207/songs-of-movie-Muskaan.html"}, {"song": "Mene Jisko Dil Yeh  Diya Hai (Woh Ho Tum)", "start_url": "http://www.lyricsmasti.com", "song_url": "/song/6902/lyrics-of-Mene-Jisko-Dil-Yeh-Diya-Hai-Woh-Ho-Tum.html", "lyrics": "Maine Jisko Dil Yeh Diya Hai, Dil Yeh Diya Hai\r\nMaine Jisko Pyaar Kiya Hai, Jisko Pyaar Kiya Hai\r\nMaine Jisko Dil Yeh Diya Hai\r\nMaine Jisko Pyaar Kiya Hai\r\nWoh Ho Tum Woh Ho Tum, Woh Ho Tum Woh Ho Tum - 2\r\n\r\nMaine Jisko Dil Yeh Diya Hai, Dil Yeh Diya Hai\r\nMaine Jisko Pyaar Kiya Hai, Jisko Pyaar Kiya Hai\r\nMaine Jisko Dil Yeh Diya Hai\r\nMaine Jisko Pyaar Kiya Hai\r\nLyricsMasti.com\r\n\r\nWoh Ho Tum Woh Ho Tum, Woh Ho Tum Woh Ho Tum - 2\r\n\r\nMaine Jisko Dil Yeh Diya Hai\r\n\r\nTumhein Paake Dilbar Mujhe Lag Raha Hai\r\nMeri Zindagi Mein Na Ab Kuch Kami Hai\r\nHo O O \r\nTumhein Paake Dilbar Mujhe Lag Raha Hai\r\nMeri Zindagi Mein Na Ab Kuch Kami Hai\r\nTumhaare Labon Pe Jo Bikhri Kali Hai\r\nWoh Shabnam Nahin Hai\r\nWafa Ki Nami Hai\r\n\r\n[Jisne Mera Chain Liya Hai\r\nMera Chain Liya Hai ] 2\r\n\r\nMaine Jisko Dil Yeh Diya Hai\r\nMaine Jisko Pyaar Kiya Hai\r\n\r\nWoh Ho Tum Woh Ho Tum\r\nWoh Ho Tum Woh Ho Tum\r\n\r\nWoh Ho Tum Woh Ho Tum\r\nWoh Ho Tum Woh Ho Tum\r\n\r\nMaine Jisko Dil Yeh Diya Hai\r\n\r\nSambhaala Tha Maine Bahut Apne Dil Ko\r\nMagar Yeh Deewaana Machalne Laga Hai\r\nOh  Sambhaala Tha Maine Bahut Apne Dil Ko\r\nMagar Yeh Deewaana Machalne Laga Hai\r\nMili Teri Meri Nazar Jab Se Dilbar\r\nKhayaalon Ka Mausam Badalne Laga Hai\r\n[Mere Bas Mein Na Mera Jiya Hai\r\n Mera Jiya Hai ] 2\r\n\r\nMaine Jisko Dil Yeh Diya Hai\r\nMaine Jisko Pyaar Kiya Hai\r\nWoh Ho Tum Woh Ho Tum\r\nWoh Ho Tum Woh Ho Tum\r\n\r\nWoh Ho Tum Woh Ho Tum\r\nWoh Ho Tum Woh Ho Tum\r\n\r\nMaine Jisko Dil Yeh Diya Hai\r\nDil Yeh Diya Hai\r\nLyricsMasti.com\r\nMaine Jisko Pyaar Kiya Hai\r\nJisko Pyaar Kiya Hai\r\n\r\nMaine Jisko Dil Yeh Diya Hai\r\nMaine Jisko Pyaar Kiya Hai\r\n\r\nWoh Ho Tum Woh Ho Tum\r\nWoh Ho Tum Woh Ho Tum\r\n\r\nWoh Ho Tum Woh Ho Tum\r\nWoh Ho Tum Woh Ho Tum", "movie": "Muskaan - 2004", "id": "25259", "singers": "['Sonu Niigam,Anuradha Paudwal']", "lyricist": "['Sameer']", "director": "['Nikhil Vinay']", "movie_url": "/3207/songs-of-movie-Muskaan.html"}, {"song": "Tum Hi Ho", "start_url": "http://www.lyricsmasti.com", "song_url": "/song/8140/lyrics-of-Tum-Hi-Ho.html", "lyrics": "Hum Tere Bin Ab Reh Nahi Sakte\r\nTere Bina Kya Wajood Mera\r\nHum Tere Bin Ab Reh Nahi Sakte\r\nTere Bina Kya Wajood Mera\r\nTujhse Juda Agar Ho Jaenge \r\nTo K
-"""
+# _target_json = """{
+#                              "marks":[12,12,12,12],
+#                              "role":"actor",
+#                              "mix":true
+#                   }"""
 
-_target_json = re_format_json(_target_json)
-print(_target_json)
+#_target_json = re_format_json(_target_json)
+with open('test_json.json','r') as f:
+    _target_json = re_format_json(f.read())
+    if not path.isdir('Parsers'):
+        mkdir('Parsers')
+    chdir('Parsers')
+    create_base(_target_json, 'Root')
 
-if not path.isdir('Parsers'):
-    mkdir('Parsers')
-chdir('Parsers')
-create_base(_target_json, 'Root')
+
+# if __name__ == '__main__':
+#     zipf = zipfile.ZipFile('Parser.zip','w',zipfile.ZIP_DEFLATED)
+#     zipdir('/Parsers',zipf)
+#     zipf.close()
+
+
+# zf = zipfile.ZipFile("myzipfile.zip", "w")
+# for dirname, subdirs, files in os.walk("Parsers/"):
+#     print(dirname)
+#     zf.write(dirname)
+#     for filename in files:
+#         zf.write(os.path.join(dirname, filename))
+# zf.close()
